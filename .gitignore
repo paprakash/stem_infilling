@@ -1,0 +1,25 @@
+# Raw data (read-only, Dropbox-synced) and third-party clones — never tracked.
+# Restormer/NAFNet commit hashes are recorded in envs/INSTALL_NOTES.md.
+dropbox_data/
+repos/
+
+# Derived data: only split manifests are tracked
+data/*
+!data/splits/
+
+# Experiment dirs: track configs, exclude checkpoints/logs/tensorboard
+runs/**/*.pth
+runs/**/*.pt
+runs/**/*.ckpt
+runs/**/*.safetensors
+runs/**/*.log
+runs/**/events.out.tfevents.*
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Anything >5MB must not be committed (git can't size-filter; checked manually
+# before each commit: git ls-files -z | xargs -0 du -m | awk '$1>=5')
+nohup.out
