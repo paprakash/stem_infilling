@@ -3,7 +3,7 @@
 Seed 20260713; structure-level 80/10/10 stratified by family.
 
 Structures: train=466 val=76 test=76
-Source-target pairs: train=12569 val=2052 test=2052
+Source-target pairs: train=12571 val=2052 test=2052
 
 | family   |   test |   train |   val |   total |
 |:---------|-------:|--------:|------:|--------:|

@@ -64,13 +64,19 @@ def main():
     rows = []
     for s in all_structs:
         ops_present = [op for op in OPS if s in targets[op]]
-        lvls = set(LEVELS)
+        # count pairs per operation independently (levels can differ per op,
+        # e.g. zrte2_Cr_doped has 9 levels in op A but only 7 in op B)
+        lvls_union = set()
+        n_pairs = 0
         for op in ops_present:
-            lvls &= {lv for lv in LEVELS
-                     if os.path.exists(os.path.join(SRC, f"operation_{op}", f"beam_damage_{lv}", s))}
+            op_lvls = {lv for lv in LEVELS
+                       if os.path.exists(os.path.join(SRC, f"operation_{op}", f"beam_damage_{lv}", s))}
+            lvls_union |= op_lvls
+            n_pairs += len(op_lvls)
         rows.append(dict(structure=s, family=material_family(s), split=assign[s],
                          ops=",".join(ops_present), n_ops=len(ops_present),
-                         levels=",".join(map(str, sorted(lvls))), n_levels=len(lvls)))
+                         levels=",".join(map(str, sorted(lvls_union))), n_levels=len(lvls_union),
+                         n_pairs=n_pairs))
     man = pd.DataFrame(rows)
     man.to_csv(os.path.join(OUT, "split_manifest.csv"), index=False)
 
@@ -85,7 +91,7 @@ def main():
     tab["total"] = tab.sum(axis=1)
     tab = tab.sort_values("total", ascending=False)
     totals = man.split.value_counts()
-    n_pairs = man.assign(pairs=man.n_ops * man.n_levels).groupby("split").pairs.sum()
+    n_pairs = man.groupby("split").n_pairs.sum()
     lines = ["# Split report", "",
              f"Seed {SEED}; structure-level 80/10/10 stratified by family.", "",
              f"Structures: train={totals.get('train', 0)} val={totals.get('val', 0)} test={totals.get('test', 0)}",

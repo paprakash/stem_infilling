@@ -36,3 +36,21 @@
   Tracked: scripts, docs, env exports, split manifests, small results. Untracked:
   dropbox_data/, repos/ (hashes pinned in envs/INSTALL_NOTES.md), checkpoints/logs.
 - Phase 0 complete — awaiting review before Phase 1 (dataloader + training).
+
+## 2026-07-13 — pair-count correction + Phase 1 eval commitments
+
+- **Pair-count fix**: split report initially said train=12,569 pairs; correct number is
+  12,571 (verified by direct disk count). No data is missing — the manifest's pair count
+  used the *intersection* of damage levels across operations, which wrongly dropped
+  `zrte2_Cr_doped` op A levels 28 & 36 (present on disk) because op B lacks those two
+  levels. `scripts/phase0_splits.py` now counts levels per operation independently and
+  the manifest carries an explicit `n_pairs` column. Split membership unchanged
+  (train/val/test.txt identical; only the accounting changed).
+  Final counts: train=12,571, val=2,052, test=2,052, total=16,675.
+- **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
+  validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
+  PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
+  detection precision/recall + position RMSE** (blob detection, e.g. Laplacian-of-Gaussian
+  on target vs. prediction with tolerance ~ half the min column spacing), and **separate
+  error on damaged vs. undamaged regions** (do-no-harm check; damage mask derived as
+  |source − target| > threshold since ground truth is available at eval time).
