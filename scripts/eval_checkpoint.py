@@ -27,9 +27,17 @@ from train_stem import build_model, infer_full
 ROOT = "/blue/hennig/pawanprakash/ornl_stem"
 
 
+def load_defect_mask(structure, op):
+    p = os.path.join(ROOT, "data", "defect_masks", f"operation_{op}",
+                     structure.replace(".png", ".npz"))
+    if os.path.exists(p):
+        return np.load(p)["mask"]
+    return None
+
+
 def one_metric_job(job):
     structure, op, lv, s, t, pred = job
-    m = all_metrics(s, t, pred, with_columns=True)
+    m = all_metrics(s, t, pred, with_columns=True, defect_mask=load_defect_mask(structure, op))
     m.update(structure=structure, family=material_family(structure), op=op, level=lv)
     return m
 

@@ -135,6 +135,42 @@ def region_metrics(source, target, pred):
     return out
 
 
+def defect_preservation(target, pred, defect_mask, tol=0.08):
+    """Fraction of defect sites (mask classes 1=vacancy, 2=anomalous column)
+    where the prediction stays within `tol` mean-abs of the target inside the
+    site disk — dark stays dark, bright stays bright. Also the vacuum phantom
+    rate: fraction of vacuum pixels (class 3) where pred exceeds target by 0.1.
+    """
+    from scipy.ndimage import label as cc_label
+    out = {"defect_sites": 0, "defect_preserved_frac": np.nan,
+           "vacancy_preserved_frac": np.nan, "anom_preserved_frac": np.nan,
+           "vacuum_phantom_frac": np.nan}
+    per_class = {}
+    for cls, key in ((1, "vacancy"), (2, "anom")):
+        sel = defect_mask == cls
+        if not sel.any():
+            continue
+        lab, n = cc_label(sel)
+        kept = 0
+        for i in range(1, n + 1):
+            site = lab == i
+            if np.abs(pred[site] - target[site]).mean() <= tol:
+                kept += 1
+        per_class[key] = (kept, n)
+    n_tot = sum(n for _, n in per_class.values())
+    out["defect_sites"] = n_tot
+    if n_tot:
+        out["defect_preserved_frac"] = sum(k for k, _ in per_class.values()) / n_tot
+    for key in ("vacancy", "anom"):
+        if key in per_class:
+            k, n = per_class[key]
+            out[f"{key}_preserved_frac"] = k / n
+    vac = defect_mask == 3
+    if vac.sum() >= 10:
+        out["vacuum_phantom_frac"] = float(((pred - target)[vac] > 0.10).mean())
+    return out
+
+
 def core_metrics(target, pred):
     return {
         "psnr": peak_signal_noise_ratio(target, pred, data_range=1.0),
@@ -144,9 +180,11 @@ def core_metrics(target, pred):
     }
 
 
-def all_metrics(source, target, pred, with_columns=True):
+def all_metrics(source, target, pred, with_columns=True, defect_mask=None):
     out = core_metrics(target, pred)
     out.update(region_metrics(source, target, pred))
     if with_columns:
         out.update(atom_column_metrics(target, pred))
+    if defect_mask is not None:
+        out.update(defect_preservation(target, pred, defect_mask))
     return out

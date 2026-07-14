@@ -70,19 +70,33 @@ def dihedral(a: np.ndarray, k: int) -> np.ndarray:
 
 
 class PairedSTEMTrain(Dataset):
-    def __init__(self, split="train", crop=384, seed=0):
+    def __init__(self, split="train", crop=384, seed=0, defect_weight=1.0):
+        """defect_weight > 1 returns a per-pixel loss-weight map as third tensor:
+        `defect_weight` inside defect+vacuum mask disks (data/defect_masks/),
+        1 elsewhere. Weight maps go through the SAME crop/dihedral as images."""
         self.index = build_index(load_split(split))
         self.crop = crop
         self.rng = random.Random(seed)
+        self.defect_weight = defect_weight
 
     def __len__(self):
         return len(self.index)
+
+    def _load_weight(self, structure, op, shape):
+        p = os.path.join(ROOT, "data", "defect_masks", f"operation_{op}",
+                         structure.replace(".png", ".npz"))
+        w = np.ones(shape, dtype=np.float32)
+        if self.defect_weight != 1.0 and os.path.exists(p):
+            m = np.load(p)["mask"]
+            w[m > 0] = self.defect_weight
+        return w
 
     def __getitem__(self, i):
         structure, op, lv = self.index[i]
         s, t, mean, std = load_pair(structure, op, lv)
         s = (s - mean) / std
         t = (t - mean) / std
+        wmap = self._load_weight(structure, op, s.shape)
 
         c = self.crop
         h, w = s.shape
@@ -90,17 +104,20 @@ class PairedSTEMTrain(Dataset):
             ph, pw = max(0, c - h), max(0, c - w)
             s = np.pad(s, ((0, ph), (0, pw)), mode="reflect")
             t = np.pad(t, ((0, ph), (0, pw)), mode="reflect")
+            wmap = np.pad(wmap, ((0, ph), (0, pw)), mode="reflect")
             h, w = s.shape
         y = torch.randint(0, h - c + 1, (1,)).item()
         x = torch.randint(0, w - c + 1, (1,)).item()
         s = s[y:y + c, x:x + c]
         t = t[y:y + c, x:x + c]
+        wmap = wmap[y:y + c, x:x + c]
 
         k = torch.randint(0, 8, (1,)).item()
         s = dihedral(s, k).copy()
         t = dihedral(t, k).copy()
+        wmap = dihedral(wmap, k).copy()
 
-        return torch.from_numpy(s)[None], torch.from_numpy(t)[None]
+        return torch.from_numpy(s)[None], torch.from_numpy(t)[None], torch.from_numpy(wmap)[None]
 
 
 def val_subset_structures():

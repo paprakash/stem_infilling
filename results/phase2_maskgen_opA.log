@@ -1,0 +1,44 @@
+618 targets
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+/home/pawanprakash/miniconda3/envs/stem/lib/python3.11/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+        n_cols  n_vacancy_sites  n_anomalous_cols  vacuum_frac
+count  618.000          618.000           618.000      618.000
+mean   124.803           10.139             3.521        0.063
+std     42.972           11.769             6.183        0.076
+min     40.000            0.000             0.000        0.000
+25%     92.250            0.000             0.000        0.000
+50%    122.000            4.000             2.000        0.056
+75%    157.750           21.000             4.000        0.095
+max    213.000           41.000            72.000        0.433
+
+Vacancy-Anion sanity (detected vacancy sites vs nominal count in name):
+         n_vacancy_sites
+nominal                 
+3.0                  3.0
+6.0                  7.0
+9.0                  7.5
+12.0                10.5

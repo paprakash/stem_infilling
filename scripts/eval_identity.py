@@ -11,6 +11,7 @@ import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +24,10 @@ ROOT = "/blue/hennig/pawanprakash/ornl_stem"
 def one(job):
     structure, op, lv = job
     s, t, _, _ = load_pair(structure, op, lv)
-    m = all_metrics(s, t, s, with_columns=True)
+    dm_path = os.path.join(ROOT, "data", "defect_masks", f"operation_{op}",
+                           structure.replace(".png", ".npz"))
+    dm = np.load(dm_path)["mask"] if os.path.exists(dm_path) else None
+    m = all_metrics(s, t, s, with_columns=True, defect_mask=dm)
     m.update(structure=structure, family=material_family(structure), op=op, level=lv)
     return m
 

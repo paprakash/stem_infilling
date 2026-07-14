@@ -111,6 +111,8 @@ def main():
     ap.add_argument("--config", required=True)
     ap.add_argument("--mode", choices=["overfit", "smoke", "train"], default="train")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--init-from", default=None,
+                    help="checkpoint to initialize MODEL WEIGHTS from (fresh optimizer/schedule); for fine-tunes")
     args = ap.parse_args()
 
     cfg = yaml.safe_load(open(args.config))
@@ -138,6 +140,10 @@ def main():
 
     start_iter = 0
     latest = os.path.join(run_dir, "latest.pth")
+    if args.init_from and not (args.resume and os.path.exists(latest)):
+        ck = torch.load(args.init_from, map_location=device, weights_only=False)
+        model.load_state_dict(ck["model"])
+        print(f"initialized weights from {args.init_from} (iter {ck['iter']}); fresh optimizer", flush=True)
     if args.resume and os.path.exists(latest):
         ck = torch.load(latest, map_location=device, weights_only=False)
         model.load_state_dict(ck["model"])
@@ -146,7 +152,8 @@ def main():
         start_iter = ck["iter"]
         print(f"resumed from iter {start_iter}", flush=True)
 
-    train_ds = PairedSTEMTrain("train", crop=cfg["data"]["crop"], seed=seed)
+    train_ds = PairedSTEMTrain("train", crop=cfg["data"]["crop"], seed=seed,
+                               defect_weight=cfg["loss"].get("defect_weight", 1.0))
     print(f"train pairs: {len(train_ds)}", flush=True)
     loader = torch.utils.data.DataLoader(
         train_ds, batch_size=cfg["data"]["batch"], shuffle=True,
@@ -159,7 +166,7 @@ def main():
 
     if args.mode == "overfit":
         batch = next(iter(loader))
-        sb, tb = batch[0][:4].to(device), batch[1][:4].to(device)
+        sb, tb = batch[0][:4].to(device), batch[1][:4].to(device)  # weight map unused in gate
         # decay LR so the loss can settle instead of oscillating at constant LR
         ofit_sched = torch.optim.lr_scheduler.CosineAnnealingLR(
             opt, T_max=total_iters, eta_min=cfg["optim"]["lr"] * 1e-3)
@@ -198,14 +205,16 @@ def main():
     t0 = time.time()
     n_seen = 0
     model.train()
+    use_weights = cfg["loss"].get("defect_weight", 1.0) != 1.0
     while it < total_iters:
-        for sb, tb in loader:
+        for sb, tb, wb in loader:
             if it >= total_iters:
                 break
             sb, tb = sb.to(device, non_blocking=True), tb.to(device, non_blocking=True)
+            wb = wb.to(device, non_blocking=True) if use_weights else None
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 pred = model(sb)
-            loss, parts = criterion(pred.float(), tb.float())
+            loss, parts = criterion(pred.float(), tb.float(), weight=wb)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()
