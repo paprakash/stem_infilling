@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+nafnet_ft,1,0,52,0,5
+nafnet_ft,2,1,40,1,8
+nafnet_ft,4,6,39,3,7
+nafnet_ft,8,3,56,5,12
+nafnet_ft,12,1,52,4,12
+nafnet_ft,16,7,60,2,9
+nafnet_ft,20,7,58,8,8
+nafnet_ft,28,3,47,5,7
+nafnet_ft,36,14,57,16,8

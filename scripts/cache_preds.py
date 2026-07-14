@@ -22,6 +22,14 @@ CKPTS = {
 }
 
 if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--name", default=None, help="cache-dir name; with --config/--ckpt overrides the default pair")
+    ap.add_argument("--config", default=None)
+    ap.add_argument("--ckpt", default=None)
+    args = ap.parse_args()
+    if args.name:
+        CKPTS = {args.name: (args.config, args.ckpt)}
     structures = val_subset_structures()
     for name, (cfg_path, ckpt_path) in CKPTS.items():
         out_dir = os.path.join(CACHE, name)

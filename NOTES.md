@@ -172,6 +172,21 @@ KL residual is small. Adopt as an optional inference flag in Phase 2, report bot
 - **Fine-tunes launched**: nafnet_w32_ft_dw10 (from 100k, 10× defect+vacuum weight,
   25k iters, lr 2.5e-4). Restormer FT queued behind its base run (~40k/100k).
 
+## 2026-07-15 — FT-dw10 result + mask-coverage root cause + FT v2
+
+- **FT dw10 (v1 masks) fell short of acceptance**: defect preservation lvl 1 only
+  0.960→0.965 (target ~0.99); vacuum phantoms halved not zeroed; audit inventions
+  83→76. No high-level regression (recall 0.984→0.981 @36, psnr_undmg +1.3 dB).
+- **Root cause: mask coverage, not weight size.** Only 47.5% of audited invention
+  sites fell inside a v1 mask disk — the strict gates that keep the METRIC clean
+  (intensity gate, size window, border-band exclusion) leave half the inventable
+  sites unweighted in TRAINING.
+- **Fix: two mask products in one array.** New class 4 "protect_dark" (training
+  only): dark pixels > 0.7·d from any detected column incl. border band. Coverage
+  of audited invention sites: **99.0%** (198/200); adds ~7% of pixels to the
+  weighted set. Metric still uses strict classes 1/2 (+3 for phantoms) only.
+- FT v2 launched: nafnet_w32_ft_dw10v2, same recipe, v2 masks.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

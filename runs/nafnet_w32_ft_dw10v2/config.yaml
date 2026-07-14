@@ -1,0 +1,32 @@
+exp: nafnet_w32_ft_dw10v2
+# Defect-weighted fine-tune from nafnet_w32_v1 iter_100000 (--init-from).
+# Charbonnier weighted 10x inside defect+vacuum mask disks; peak LR 1/4 of
+# base run for fine-tune stability; everything else unchanged.
+model:
+  name: nafnet
+  width: 32
+  enc_blks: [2, 2, 4, 8]
+  middle_blk_num: 12
+  dec_blks: [2, 2, 2, 2]
+data:
+  crop: 384
+  batch: 16
+  workers: 8
+optim:
+  lr: 2.5e-4
+  min_lr: 1.0e-7
+  betas: [0.9, 0.9]
+  weight_decay: 0.0
+loss:
+  fft_weight: 0.1
+  charb_eps: 1.0e-3
+  defect_weight: 10.0
+train:
+  total_iters: 25000
+  val_every: 1000
+  full_val_every: 5000
+  ckpt_every: 1000
+  milestone_every: 5000
+  log_every: 100
+  overfit_iters: 1500
+  seed: 20260714

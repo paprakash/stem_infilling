@@ -82,6 +82,15 @@ def contact_sheet(cases, path, per_row=5):
 
 
 def main():
+    global MODELS
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--models", nargs="+", default=None, help="cache-dir names under data/cache_phase1_preds/")
+    ap.add_argument("--tag", default="", help="suffix for output filenames")
+    args = ap.parse_args()
+    if args.models:
+        MODELS = args.models
+    tag = f"_{args.tag}" if args.tag else ""
     os.makedirs(OUT, exist_ok=True)
     structures = val_subset_structures()
     all_rows = []
@@ -119,12 +128,12 @@ def main():
                         n_struct_lv[key] = 1
         order = {"invented_undamaged": 0, "invented_damaged": 1, "borderline_shifted": 2, "boundary_edge": 3}
         cases.sort(key=lambda c: order.get(c[3].split(" ")[0][:14], 9))
-        contact_sheet(cases, os.path.join(OUT, f"contact_{model}.png"))
+        contact_sheet(cases, os.path.join(OUT, f"contact_{model}{tag}.png"))
 
     df = pd.DataFrame(all_rows)
-    df.to_csv(os.path.join(OUT, "hallucination_cases.csv"), index=False)
+    df.to_csv(os.path.join(OUT, f"hallucination_cases{tag}.csv"), index=False)
     counts = df.pivot_table(index=["model", "level"], columns="cls", aggfunc="size", fill_value=0)
-    counts.to_csv(os.path.join(OUT, "hallucination_counts.csv"))
+    counts.to_csv(os.path.join(OUT, f"hallucination_counts{tag}.csv"))
     print(counts.to_string())
     print()
     print(df.groupby(["model", "cls"]).size().unstack(fill_value=0).to_string())

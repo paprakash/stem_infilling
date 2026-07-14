@@ -155,6 +155,16 @@ def build_mask(t):
     meta["n_anomalous_cols"] = n_anom
 
     mask[vacuum & (mask == 0)] = 3
+
+    # --- class 4 "protect_dark" (TRAINING ONLY, not used by the preservation
+    # metric): permissive coverage of every site where a column could be
+    # invented — dark pixels far from any detected column, INCLUDING the
+    # border band. The strict vacancy gates above keep the metric clean but
+    # cover only ~half of audited invention sites; the loss weight needs the
+    # rest. ---
+    protect = (dist > 0.7 * d) & (t_flat < vac_gate) & ~vacuum & (mask == 0)
+    mask[protect] = 4
+    meta["protect_dark_frac"] = float(protect.mean())
     return mask, meta
 
 
