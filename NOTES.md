@@ -146,6 +146,32 @@ NAFNet lvl 1: 0.035→0.023; identity lvl 1 = 0.0065). A deterministic post-proc
 closes most of the texture gap → no loss-engineering needed for it; remaining low-level
 KL residual is small. Adopt as an optional inference flag in Phase 2, report both.
 
+## 2026-07-14 — Phase 2 build: defect masks, preservation metric, FT baselines
+
+- **Defect masks** (`data/defect_masks/`, regenerable via scripts/make_defect_masks.py):
+  all 1,853 targets, classes vacancy/anomalous-column/vacuum. QC over 3 detector
+  iterations (results/phase2/defect_mask_qc.png): Defect-Free structures come out
+  clean; Vacancy-Anion-NN nominal sanity 3→3, 6→7, 9→7, 12→10. Known limitations
+  (documented in-script): stripe-artifact anomaly FPs on a minority of structures;
+  dim-sublattice materials (tis2, ws2 …) get their near-invisible anion sites flagged
+  as "vacancies" — intentional for training (dark sites that must stay dark), mildly
+  dilutive for the metric.
+- **Defect-preservation metric** (stem_metrics.defect_preservation): per-site
+  mean|pred−target| ≤ 0.08 within mask disks + vacuum phantom rate (pred−target > 0.1).
+  Wired into eval_checkpoint + eval_identity. USE MEANS, NOT MEDIANS (median hides
+  the invention tail).
+- **Baselines on full val (means)**: identity 0.996 (lvl 1) → 0.838 (lvl 36);
+  NAFNet@100k 0.960 (lvl 1) → 0.888 (lvl 36); crossover ~lvl 12-16. NAFNet's ~4%
+  defect erasure at low damage = the quantified hallucination problem; NAFNet
+  vacuum-phantom rate 2-6% (identity 0). FT acceptance: lvl 1-8 preservation
+  ≥ ~0.99, vacuum phantoms ~0, no high-level recall/psnr_dmg give-back.
+- **NAFNet@100k full val** (vs @25k): lvl-36 PSNR 27.11 (was 26.40), col_recall
+  0.984, col_rmse 1.53 px; lvl-1 PSNR 31.12 — full-val lvl-1 PSNR still below
+  identity 32.12 despite subset-val suggesting otherwise; KL 0.034 vs id 0.0065.
+  NAFNet is a high-damage specialist; the low-damage margin remains texture-driven.
+- **Fine-tunes launched**: nafnet_w32_ft_dw10 (from 100k, 10× defect+vacuum weight,
+  25k iters, lr 2.5e-4). Restormer FT queued behind its base run (~40k/100k).
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
