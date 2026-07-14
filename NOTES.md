@@ -103,6 +103,49 @@ breakdown_curves.png, triptychs/, *_iter25000_val_per_image.csv}. Trainings cont
 - Fixed: build_model now purges vendored `basicsr` modules between loads (two models
   in one process, e.g. triptych rendering).
 
+## 2026-07-14 — Phase 1 diagnostics on the 25k predictions (val subset, op A, 180 imgs/model)
+
+Artifacts: results/phase1/diagnostics/ (contact sheets, hallucination_cases.csv,
+undamaged_column_metrics.csv, noise_probe.csv). Two of my first-pass diagnostic scripts
+had bugs (stats capped by contact-sheet sampling → vo2-biased counts; mask-edge matches
+deflating restricted precision) — both fixed, numbers below are from the fixed runs.
+
+### 1. Hallucination audit — REAL but small and localized
+Unbiased FP census (NAFNet 747, Restormer 553 FPs across 180 images):
+- ~72% (NAFNet) / 46% (Restormer) are blob-detector artifacts at image borders or
+  damage-mask boundaries; ~10-22% are shifted/borderline detections of real columns.
+- **Genuine inventions (source dark AND target dark, prediction bright ~0.35-0.43):**
+  NAFNet 80, Restormer 120. Two sub-modes:
+  - **In-lattice vacancy fill — the science problem**: 63 cases each model. The
+    periodicity prior fills TRUE anion-vacancy sites; heavily concentrated on
+    vacancy-rich structures (nbte2_Vacancy-Anion-12A: 31 NAFNet / 19 Restormer;
+    also nbs2_Anti-Metal, tise2_Adatom-Li). Rate ≈ 2-3 per 1000 true columns,
+    ~0.35/image, present at ALL damage levels incl. 1-2.
+  - Vacuum extension (phantom lattice in dark field-of-view margins): 17 NAFNet /
+    57 Restormer; likely crop-away-able in the workflow.
+- Verdict: not a blocker at this rate, but it erases exactly the defects the group
+  studies → Phase 2 must include a defect-preservation mitigation (defect-site loss
+  weighting, source-consistency guard, or confidence masking) and this audit must be
+  rerun at 100k and on the final model.
+
+### 2. Undamaged-region column metrics — smoothing unification PARTIALLY confirmed
+Restricted to undamaged pixels (median): **u_recall = 1.000 at every level, both
+models; u_rmse 0.37-0.46 px** (identity-grade sub-pixel accuracy). u_precision
+0.92-0.94 (NAFNet) / 0.94-0.99 (Restormer) — the shortfall is the invention channel
+above plus detector artifacts, NOT missing/displaced real structure.
+**Conclusion (reframing the open questions):** the KL gap, do-no-harm PSNR gap, and
+FFT-spectrum gap ARE one smoothing/texture phenomenon — no real structure is lost in
+undamaged regions. The column-precision gap is the one genuinely structural issue
+(vacancy infill), and it is separate from smoothing.
+
+### 3. Noise-matching probe — texture gap closable post-hoc, zero hallucination risk
+Injecting noise matched to the SOURCE's high-pass radial spectrum (deployment-legal)
+into predictions: **FFT radial error collapses 0.84-1.35 → 0.12-0.16** (identity
+0.02-0.11) and **KL drops 2-4×** at every level (e.g. Restormer lvl 36: 0.194→0.044;
+NAFNet lvl 1: 0.035→0.023; identity lvl 1 = 0.0065). A deterministic post-process
+closes most of the texture gap → no loss-engineering needed for it; remaining low-level
+KL residual is small. Adopt as an optional inference flag in Phase 2, report both.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

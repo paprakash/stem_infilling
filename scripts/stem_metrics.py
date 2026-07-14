@@ -52,6 +52,35 @@ def detect_columns(img):
     return blobs[:, :2] if len(blobs) else np.zeros((0, 2))
 
 
+def match_column_positions(target, pred):
+    """Full matching detail for diagnostics: detected positions, matches, and
+    unmatched predicted columns (false positives). Returns dict with
+    ct (N,2), cp (M,2), tol, matches [(ti, pi, dist)], fp_idx (unmatched pred)."""
+    ct = detect_columns(target)
+    cp = detect_columns(pred)
+    out = {"ct": ct, "cp": cp, "tol": np.nan, "matches": [], "fp_idx": []}
+    if len(ct) == 0 or len(cp) == 0:
+        out["fp_idx"] = list(range(len(cp)))
+        return out
+    dnn, _ = cKDTree(ct).query(ct, k=2)
+    tol = max(2.0, 0.5 * float(np.median(dnn[:, 1])))
+    out["tol"] = tol
+    d, j = cKDTree(cp).query(ct, k=1)
+    order = np.argsort(d)
+    used_p, used_t = set(), set()
+    for ti in order:
+        if d[ti] > tol:
+            break
+        pi = int(j[ti])
+        if pi in used_p or int(ti) in used_t:
+            continue
+        used_p.add(pi)
+        used_t.add(int(ti))
+        out["matches"].append((int(ti), pi, float(d[ti])))
+    out["fp_idx"] = [i for i in range(len(cp)) if i not in used_p]
+    return out
+
+
 def atom_column_metrics(target, pred):
     ct = detect_columns(target)
     cp = detect_columns(pred)
