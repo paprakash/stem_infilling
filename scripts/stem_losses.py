@@ -17,12 +17,20 @@ def fft_amplitude_l1(pred, target):
 
 
 class RestorationLoss(torch.nn.Module):
-    def __init__(self, fft_weight=0.1, charb_eps=1e-3):
+    def __init__(self, fft_weight=0.1, charb_eps=1e-3, invention_penalty=0.0):
         super().__init__()
         self.fft_weight = fft_weight
         self.charb_eps = charb_eps
+        self.invention_penalty = invention_penalty
 
-    def forward(self, pred, target, weight=None):
+    def forward(self, pred, target, weight=None, inv_sites=None):
         lc = charbonnier(pred, target, self.charb_eps, weight=weight)
         lf = fft_amplitude_l1(pred, target)
-        return lc + self.fft_weight * lf, {"charb": lc.item(), "fft": lf.item()}
+        loss = lc + self.fft_weight * lf
+        parts = {"charb": lc.item(), "fft": lf.item()}
+        if self.invention_penalty > 0 and inv_sites is not None and inv_sites.sum() > 0:
+            # asymmetric: punish only ADDED intensity at dark/vacuum sites
+            li = (torch.relu(pred - target) * inv_sites).sum() / inv_sites.sum()
+            loss = loss + self.invention_penalty * li
+            parts["inv"] = li.item()
+        return loss, parts

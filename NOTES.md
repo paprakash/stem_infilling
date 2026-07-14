@@ -187,6 +187,34 @@ KL residual is small. Adopt as an optional inference flag in Phase 2, report bot
   weighted set. Metric still uses strict classes 1/2 (+3 for phantoms) only.
 - FT v2 launched: nafnet_w32_ft_dw10v2, same recipe, v2 masks.
 
+## 2026-07-15 — GB audit + evidence-conditioned weighting build
+
+- **GB audit** (results/phase2/gb_strips.png, gb_clustering.csv): most targets carry a
+  vertical registry-shift seam near center (+ sometimes horizontal). REINTERPRETATION:
+  the "scan-line stripe" that confused the anomaly detector in mask QC is (at least
+  often) the GB seam itself — flagging columns on it was arguably correct.
+  Verdict: **wholesale healing NOT confirmed** — seams survive in predictions even
+  under heavy damage (tate2/tas2 L36 restore the seam correctly). But
+  borderline-shifted detections cluster **2.5-2.9× near the seam** (both base100k and
+  ft): column-placement wobble = healing pressure without erasure. Invented columns
+  are a bulk phenomenon (clustering 0.67), not GB-driven.
+- **Audit baseline correction**: base-100k inventions = 105 (vs 83 at 25k — more
+  training made it worse). FT-dw10's true effect: 105 → 76 (−28%).
+- **Masks v3 plan**: + class 5 "gb_line" (training-only): deepest central-band dip of
+  row/col median profile, depth-gated ≥0.06, band ±0.4d. NOT regenerated yet — the
+  running ft_dw10v2 reads masks lazily; regen only after it completes to keep its
+  protect-dark ablation clean.
+- **Evidence-conditioned weighting implemented** (configs ready, launch after dw10v2
+  acceptance): defect site ∧ visible-in-source → 10×; defect site ∧ destroyed → 2×
+  (damage mask on the fly in the dataloader). Plus optional asymmetric invention
+  penalty: 5 × mean(relu(pred−target)) at classes {1,3,4} — runs as separate ablation
+  (nafnet_w32_ft_evid / _evid_asym).
+- **dw10-v1 hedging check @ lvl 36** (base100k → ft_dw10): defect preservation
+  +0.010 (0.888→0.898) at cost psnr_dmg −0.33 dB (24.60→24.27), col_recall −0.003.
+  Mild hedging signature — the evidence split exists to eliminate exactly this.
+- Decision rule (user): winning recipe = best low-level defect preservation subject to
+  no high-damage regression; goes into the final from-scratch retrain.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

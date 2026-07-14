@@ -165,6 +165,32 @@ def build_mask(t):
     protect = (dist > 0.7 * d) & (t_flat < vac_gate) & ~vacuum & (mask == 0)
     mask[protect] = 4
     meta["protect_dark_frac"] = float(protect.mean())
+
+    # --- class 5 "gb_line" (TRAINING ONLY): grain-boundary seam. Operations
+    # are built on GBs — audited borderline-shifted detections cluster 2.5-2.9x
+    # near the seam (displacement pressure, not erasure). Located as the
+    # deepest central-band dip of the row/column median intensity profile,
+    # gated on dip depth; band of ±0.4*d marked. ---
+    n_gb = 0
+    for axis in (0, 1):  # 0: column profile (vertical seam), 1: row profile
+        prof = np.nanmedian(np.where(interior, t, np.nan), axis=axis)
+        prof = np.nan_to_num(prof, nan=float(np.nanmedian(prof)))
+        L = len(prof)
+        lo, hi = int(0.30 * L), int(0.70 * L)
+        pos = lo + int(np.argmin(prof[lo:hi]))
+        depth = float(np.median(prof) - prof[pos])
+        if depth < 0.06:
+            continue
+        half = max(2, int(round(0.4 * d)))
+        sel = np.zeros((h, w), dtype=bool)
+        if axis == 0:
+            sel[:, max(0, pos - half):pos + half] = True
+        else:
+            sel[max(0, pos - half):pos + half, :] = True
+        sel &= (mask == 0) | (mask == 4)
+        mask[sel] = 5
+        n_gb += 1
+    meta["n_gb_lines"] = n_gb
     return mask, meta
 
 

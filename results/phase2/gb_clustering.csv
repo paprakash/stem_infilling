@@ -1,0 +1,7 @@
+model,cls,n,near_gb,frac_near,expected_frac,clustering_ratio
+base100k,borderline_shifted,45,25,0.5555555555555556,0.219,2.54
+base100k,invented_undamaged,105,14,0.13333333333333333,0.2,0.67
+base100k,invented_damaged,48,15,0.3125,0.22,1.42
+ft,borderline_shifted,42,27,0.6428571428571429,0.22,2.92
+ft,invented_undamaged,76,10,0.13157894736842105,0.2,0.66
+ft,invented_damaged,44,13,0.29545454545454547,0.223,1.33

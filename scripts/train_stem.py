@@ -136,7 +136,8 @@ def main():
                             weight_decay=cfg["optim"]["weight_decay"])
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=total_iters,
                                                        eta_min=cfg["optim"]["min_lr"])
-    criterion = RestorationLoss(cfg["loss"]["fft_weight"], cfg["loss"]["charb_eps"])
+    criterion = RestorationLoss(cfg["loss"]["fft_weight"], cfg["loss"]["charb_eps"],
+                                invention_penalty=cfg["loss"].get("invention_penalty", 0.0))
 
     start_iter = 0
     latest = os.path.join(run_dir, "latest.pth")
@@ -153,7 +154,9 @@ def main():
         print(f"resumed from iter {start_iter}", flush=True)
 
     train_ds = PairedSTEMTrain("train", crop=cfg["data"]["crop"], seed=seed,
-                               defect_weight=cfg["loss"].get("defect_weight", 1.0))
+                               defect_weight=cfg["loss"].get("defect_weight", 1.0),
+                               weight_visible=cfg["loss"].get("defect_weight_visible"),
+                               weight_destroyed=cfg["loss"].get("defect_weight_destroyed"))
     print(f"train pairs: {len(train_ds)}", flush=True)
     loader = torch.utils.data.DataLoader(
         train_ds, batch_size=cfg["data"]["batch"], shuffle=True,
@@ -205,16 +208,19 @@ def main():
     t0 = time.time()
     n_seen = 0
     model.train()
-    use_weights = cfg["loss"].get("defect_weight", 1.0) != 1.0
+    use_weights = (cfg["loss"].get("defect_weight", 1.0) != 1.0
+                   or cfg["loss"].get("defect_weight_visible") is not None)
+    use_inv = cfg["loss"].get("invention_penalty", 0.0) > 0
     while it < total_iters:
-        for sb, tb, wb in loader:
+        for sb, tb, wb, ib in loader:
             if it >= total_iters:
                 break
             sb, tb = sb.to(device, non_blocking=True), tb.to(device, non_blocking=True)
             wb = wb.to(device, non_blocking=True) if use_weights else None
+            ib = ib.to(device, non_blocking=True) if use_inv else None
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 pred = model(sb)
-            loss, parts = criterion(pred.float(), tb.float(), weight=wb)
+            loss, parts = criterion(pred.float(), tb.float(), weight=wb, inv_sites=ib)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()
