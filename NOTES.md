@@ -47,6 +47,29 @@
   the manifest carries an explicit `n_pairs` column. Split membership unchanged
   (train/val/test.txt identical; only the accounting changed).
   Final counts: train=12,571, val=2,052, test=2,052, total=16,675.
+## 2026-07-13 — Phase 1 build + gates
+
+- **Harness** (`scripts/`): stem_data.py (per-image source-stat normalization applied to
+  both images — invertible at inference where only the source exists; 384 crops;
+  reflect-pad guard; dihedral-only aug; uniform pair sampling = level-balanced by
+  construction, 617-618 pairs/level), stem_losses.py (Charbonnier eps 1e-3 + 0.1×FFT-amp,
+  ortho-normalized), stem_metrics.py (full committed set; damage mask |s-t|>0.06 dilated;
+  LoG columns, tol = half median NN spacing), train_stem.py (modes overfit/smoke/train,
+  bf16 autocast, AdamW+cosine, ckpt+resume, light val 1k / full val 5k on fixed subset).
+- **Val subset** (`data/splits/val_subset.txt`): 20 val structures, one per family,
+  hard families vo2 + mno2 force-included; op A × 9 levels = 180 pairs.
+- **Both archs keep their built-in global residual** (NAFNet x+inp, Restormer +inp_img).
+- **Gate A (single-batch overfit) PASSED both**: NAFNet MSE 1.8e-6 @1500 it; Restormer
+  4.8e-6 @4000 it (needed 4000 not 1500 at its lr 3e-4 — loss was still descending, not a
+  pathology; fixed by adding cosine decay to overfit mode + more iters). Triptychs in
+  results/phase1/overfit/ visually match targets.
+- **Gate B NAFNet PASSED**: 2.14 it/s @ batch16×384², 25.7 GiB peak, all metrics × 9
+  levels, no NaNs. At 500 it already beats identity at levels ≥16 but LOSES to identity
+  at level 1 (29.5 vs 32.1 dB) and fft_err ≫ identity everywhere — watch both at 25k.
+- **Identity full-metric baseline** (val, results/phase1/identity_val_per_image.csv):
+  col_recall 0.994→0.803 by level; col_precision 1.0 flat; psnr_dmg 25.1→13.4 dB;
+  psnr_undmg ~33-35 dB (do-no-harm bar); col_rmse 0.39-0.66 px.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

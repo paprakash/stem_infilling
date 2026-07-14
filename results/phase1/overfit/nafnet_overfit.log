@@ -1,0 +1,20 @@
+[nafnet_w32_v1] nafnet 29.2M params, mode=overfit
+train pairs: 12571
+val subset pairs: 180
+overfit it 0: loss 0.46282 charb 0.45271 fft 0.10112 batch-mse 4.42e-01
+overfit it 100: loss 0.12521 charb 0.11771 fft 0.07502 batch-mse 3.91e-02
+overfit it 200: loss 0.09148 charb 0.08449 fft 0.06984 batch-mse 1.27e-02
+overfit it 300: loss 0.05645 charb 0.05238 fft 0.04069 batch-mse 6.20e-03
+overfit it 400: loss 0.01828 charb 0.01682 fft 0.01461 batch-mse 8.27e-04
+overfit it 500: loss 0.01118 charb 0.01054 fft 0.00639 batch-mse 2.52e-04
+overfit it 600: loss 0.00891 charb 0.00842 fft 0.00489 batch-mse 1.69e-04
+overfit it 700: loss 0.00744 charb 0.00709 fft 0.00346 batch-mse 1.52e-04
+overfit it 800: loss 0.00631 charb 0.00603 fft 0.00284 batch-mse 7.03e-05
+overfit it 900: loss 0.00511 charb 0.00487 fft 0.00234 batch-mse 3.90e-05
+overfit it 1000: loss 0.00365 charb 0.00347 fft 0.00183 batch-mse 3.06e-05
+overfit it 1100: loss 0.00298 charb 0.00286 fft 0.00127 batch-mse 1.27e-05
+overfit it 1200: loss 0.00198 charb 0.00189 fft 0.00099 batch-mse 4.93e-06
+overfit it 1300: loss 0.00172 charb 0.00163 fft 0.00084 batch-mse 2.85e-06
+overfit it 1400: loss 0.00157 charb 0.00149 fft 0.00075 batch-mse 1.98e-06
+overfit it 1499: loss 0.00153 charb 0.00146 fft 0.00072 batch-mse 1.86e-06
+GATE A PASSED: final batch MSE 1.81e-06 (threshold 1e-4); triptychs in /blue/hennig/pawanprakash/ornl_stem/results/phase1/overfit

@@ -1,0 +1,45 @@
+[restormer_v1] restormer 26.1M params, mode=overfit
+train pairs: 12571
+val subset pairs: 180
+overfit it 0: loss 0.28444 charb 0.27770 fft 0.06739 batch-mse 2.39e-01
+overfit it 100: loss 0.10306 charb 0.09712 fft 0.05945 batch-mse 4.12e-02
+overfit it 200: loss 0.06610 charb 0.06130 fft 0.04803 batch-mse 9.71e-03
+overfit it 300: loss 0.02687 charb 0.02475 fft 0.02125 batch-mse 2.09e-03
+overfit it 400: loss 0.01410 charb 0.01297 fft 0.01135 batch-mse 7.05e-04
+overfit it 500: loss 0.01170 charb 0.01077 fft 0.00932 batch-mse 5.67e-04
+overfit it 600: loss 0.00911 charb 0.00833 fft 0.00784 batch-mse 4.41e-04
+overfit it 700: loss 0.00906 charb 0.00835 fft 0.00708 batch-mse 4.30e-04
+overfit it 800: loss 0.00773 charb 0.00706 fft 0.00673 batch-mse 3.52e-04
+overfit it 900: loss 0.00760 charb 0.00703 fft 0.00564 batch-mse 2.92e-04
+overfit it 1000: loss 0.00650 charb 0.00599 fft 0.00515 batch-mse 2.33e-04
+overfit it 1100: loss 0.00592 charb 0.00547 fft 0.00450 batch-mse 1.63e-04
+overfit it 1200: loss 0.00522 charb 0.00482 fft 0.00392 batch-mse 1.18e-04
+overfit it 1300: loss 0.00494 charb 0.00459 fft 0.00347 batch-mse 1.03e-04
+overfit it 1400: loss 0.00468 charb 0.00436 fft 0.00318 batch-mse 7.37e-05
+overfit it 1500: loss 0.00460 charb 0.00432 fft 0.00277 batch-mse 6.89e-05
+overfit it 1600: loss 0.00404 charb 0.00379 fft 0.00250 batch-mse 4.98e-05
+overfit it 1700: loss 0.00415 charb 0.00392 fft 0.00231 batch-mse 4.70e-05
+overfit it 1800: loss 0.00383 charb 0.00361 fft 0.00219 batch-mse 4.42e-05
+overfit it 1900: loss 0.00331 charb 0.00311 fft 0.00199 batch-mse 2.42e-05
+overfit it 2000: loss 0.00347 charb 0.00327 fft 0.00195 batch-mse 3.07e-05
+overfit it 2100: loss 0.00309 charb 0.00291 fft 0.00174 batch-mse 1.60e-05
+overfit it 2200: loss 0.00297 charb 0.00280 fft 0.00166 batch-mse 1.77e-05
+overfit it 2300: loss 0.00283 charb 0.00267 fft 0.00162 batch-mse 1.29e-05
+overfit it 2400: loss 0.00280 charb 0.00265 fft 0.00156 batch-mse 1.49e-05
+overfit it 2500: loss 0.00279 charb 0.00264 fft 0.00154 batch-mse 1.23e-05
+overfit it 2600: loss 0.00261 charb 0.00247 fft 0.00148 batch-mse 9.41e-06
+overfit it 2700: loss 0.00270 charb 0.00255 fft 0.00146 batch-mse 1.03e-05
+overfit it 2800: loss 0.00260 charb 0.00246 fft 0.00144 batch-mse 1.00e-05
+overfit it 2900: loss 0.00237 charb 0.00224 fft 0.00136 batch-mse 7.49e-06
+overfit it 3000: loss 0.00231 charb 0.00218 fft 0.00132 batch-mse 6.36e-06
+overfit it 3100: loss 0.00229 charb 0.00216 fft 0.00128 batch-mse 6.57e-06
+overfit it 3200: loss 0.00225 charb 0.00213 fft 0.00126 batch-mse 6.40e-06
+overfit it 3300: loss 0.00222 charb 0.00209 fft 0.00124 batch-mse 5.90e-06
+overfit it 3400: loss 0.00218 charb 0.00206 fft 0.00123 batch-mse 5.49e-06
+overfit it 3500: loss 0.00213 charb 0.00201 fft 0.00121 batch-mse 5.05e-06
+overfit it 3600: loss 0.00213 charb 0.00201 fft 0.00121 batch-mse 5.06e-06
+overfit it 3700: loss 0.00210 charb 0.00198 fft 0.00119 batch-mse 4.95e-06
+overfit it 3800: loss 0.00209 charb 0.00197 fft 0.00118 batch-mse 4.86e-06
+overfit it 3900: loss 0.00208 charb 0.00196 fft 0.00118 batch-mse 4.77e-06
+overfit it 3999: loss 0.00208 charb 0.00196 fft 0.00118 batch-mse 4.77e-06
+GATE A PASSED: final batch MSE 4.78e-06 (threshold 1e-4); triptychs in /blue/hennig/pawanprakash/ornl_stem/results/phase1/overfit

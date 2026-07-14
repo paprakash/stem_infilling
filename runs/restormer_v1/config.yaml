@@ -1,0 +1,30 @@
+exp: restormer_v1
+model:
+  name: restormer
+  dim: 48
+  num_blocks: [4, 6, 6, 8]
+  num_refinement_blocks: 4
+  heads: [1, 2, 4, 8]
+  ffn_expansion_factor: 2.66
+data:
+  crop: 384
+  batch: 6
+  workers: 8
+optim:
+  # Restormer paper: AdamW lr 3e-4 -> 1e-6 cosine, betas (0.9, 0.999), wd 1e-4
+  lr: 3.0e-4
+  min_lr: 1.0e-6
+  betas: [0.9, 0.999]
+  weight_decay: 1.0e-4
+loss:
+  fft_weight: 0.1
+  charb_eps: 1.0e-3
+train:
+  total_iters: 100000
+  val_every: 1000
+  full_val_every: 5000
+  ckpt_every: 1000
+  milestone_every: 5000
+  log_every: 100
+  overfit_iters: 4000  # 26M transformer at lr 3e-4 needs more than NAFNet's 1500 to collapse
+  seed: 20260713
