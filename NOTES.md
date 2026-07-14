@@ -70,6 +70,39 @@
   col_recall 0.994→0.803 by level; col_precision 1.0 flat; psnr_dmg 25.1→13.4 dB;
   psnr_undmg ~33-35 dB (do-no-harm bar); col_rmse 0.39-0.66 px.
 
+## 2026-07-14 — Phase 1 first report (both models @ iter 25,000, FULL val split, 2,052 pairs)
+
+Artifacts: results/phase1/{report_by_level.csv, report_by_family.csv, report_tables.md,
+breakdown_curves.png, triptychs/, *_iter25000_val_per_image.csv}. Trainings continue
+(100k total; NAFNet ~85k, Restormer ~26k at time of writing, 2.0 / 0.6 it/s co-located).
+
+- **Key question (beat identity at level 1?)** at 25k: Restormer YES on PSNR (32.34 vs
+  32.12) but NO on KL (0.032 vs 0.0065). NAFNet NO on PSNR (31.78) and KL (0.025). BUT
+  NAFNet's later checkpoints close it: subset-val lvl-1 PSNR 32.6 @25k → 33.5 @80k.
+  KL above identity at low levels for both is the honest miss so far.
+- **High damage: decisively beaten** (lvl 36, vs identity): NAFNet PSNR 26.4 (+8.2 dB),
+  col_recall 0.983 (id 0.803), col_rmse 1.97 px, psnr_dmg 23.4 (+10.1 dB). Restormer
+  PSNR 23.6, col_recall 0.913, col_rmse 3.17 px. NAFNet dominates every metric at
+  levels ≥8 at equal iters.
+- **Do-no-harm split**: Restormer preserves undamaged pixels at identity level
+  (psnr_undmg 35.6 vs id 35.4 @lvl1); NAFNet degrades them (~32.8, −2.6 dB) while
+  fixing damaged pixels better (30.1 vs 27.2 @lvl1). Restormer = conservative,
+  NAFNet = aggressive. Watch NAFNet's undamaged-region error at 100k.
+- **Column precision** both ~0.97 vs identity 1.00 → small spurious/shifted detection
+  rate — the hallucination-relevant number, must be tracked (see triptychs: Restormer
+  leaves faint ghost texture in big infills at lvl 36; NAFNet's infill is cleaner).
+- **FFT radial log-error ≫ identity for both** (~0.85–1.3 vs 0.02–0.12): predictions
+  are much smoother than targets — the target's noise texture is not reproduced
+  (conditional-mean regression). Structural metrics are fine, so likely acceptable
+  for the workflow; if the group wants matched texture, raise fft_weight or add a
+  mild high-frequency term in Phase 2. NOTE: identity "wins" this metric trivially
+  because source and target share the same noise process.
+- **Caveat**: comparison is at equal iters (25k), where Restormer has seen ~2.7× fewer
+  patches than NAFNet at equal wall-clock shares (batch 6 vs 16, 0.6 vs 2.0 it/s).
+  Final verdict at 100k / equal-effort checkpoints in the Phase-1 close-out.
+- Fixed: build_model now purges vendored `basicsr` modules between loads (two models
+  in one process, e.g. triptych rendering).
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

@@ -35,6 +35,11 @@ ROOT = "/blue/hennig/pawanprakash/ornl_stem"
 
 def build_model(mcfg):
     name = mcfg["name"]
+    # each repo vendors its own `basicsr`; purge any previously imported copy so
+    # two models can be built in one process (e.g. triptych rendering)
+    for k in [k for k in list(sys.modules) if k == "basicsr" or k.startswith("basicsr.")]:
+        del sys.modules[k]
+    sys.path = [p for p in sys.path if not p.startswith(f"{ROOT}/repos/")]
     if name == "nafnet":
         sys.path.insert(0, f"{ROOT}/repos/NAFNet")
         from basicsr.models.archs.NAFNet_arch import NAFNet
