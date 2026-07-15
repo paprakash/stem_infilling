@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+nafnet_ftv2,1,0,48,0,7
+nafnet_ftv2,2,0,32,3,7
+nafnet_ftv2,4,6,32,4,4
+nafnet_ftv2,8,2,49,6,7
+nafnet_ftv2,12,4,47,4,11
+nafnet_ftv2,16,6,67,3,14
+nafnet_ftv2,20,6,54,10,7
+nafnet_ftv2,28,3,42,5,8
+nafnet_ftv2,36,9,52,17,8

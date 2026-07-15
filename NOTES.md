@@ -215,6 +215,20 @@ KL residual is small. Adopt as an optional inference flag in Phase 2, report bot
 - Decision rule (user): winning recipe = best low-level defect preservation subject to
   no high-damage regression; goes into the final from-scratch retrain.
 
+## 2026-07-15 — FT-dw10v2 acceptance: symmetric weighting saturates
+
+Full-val means, base100k → ft_v1 (47% coverage) → ft_v2 (99% coverage):
+- defect preservation lvl 1: 0.9596 → 0.9653 → 0.9663 (identity 0.9955). Coverage was
+  NOT the bottleneck either — 10× symmetric Charbonnier saturates at ~−30% inventions
+  (audit: 105 → 76 → 73). Filling a vacancy and erasing a column cost the same under a
+  symmetric loss; the conditional-mean pull wins.
+- vacuum phantoms respond well: 0.0194 → 0.0090 → 0.0073 (lvl 1); 0.055 → 0.030 → 0.019 (36).
+- Hedging cost grows with weighted area: lvl-36 psnr_dmg 24.60 → 24.27 → 23.96,
+  recall 0.9844 → 0.9811 → 0.9778. Uniform weights inside destroyed regions teach
+  hedging — the evidence split exists to remove exactly this.
+- Masks v3 (with GB class 5) generated after ft_v2 finished (lazy-read safety);
+  nafnet_w32_ft_evid and _evid_asym launched from 100k on v3 masks.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
