@@ -242,6 +242,19 @@ evid_asym(5) 0.981|0.945|21.53. Identity bar: 0.996|0.804|13.4.
 - Interpolation launched: nafnet_w32_ft_evid_asym1 (evid + invention_penalty 1.0).
   Decision after its battery; winning recipe → final from-scratch retrain.
 
+## 2026-07-15 — asym1 interpolation: the recipe trade-off curve is complete
+
+def_pres@1 | vac_ph@36 | recall@36 | psnr_dmg@36 (full val):
+base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
+**asym1 0.975|0.009|0.969|23.22** · asym5 0.981|0.007|0.945|21.53 · id 0.996|0|0.804|13.38
+- Preservation gain and high-damage cost scale together with the penalty coefficient —
+  no free lunch in this loss family; the coefficient IS the science dial.
+- asym1 ≥ identity on defect preservation at every level ≥ 8; residual gap only at 1-4.
+- Recommendation for the from-scratch retrain: **evid + invention_penalty 1.0 (asym1)**
+  — largest preservation gain whose absolute costs stay small (recall@36 0.969 ≫ id
+  0.804; psnr_dmg still +9.8 dB over id). Strict no-regression alternative: evid.
+  Decision deferred to review at 100k close-out.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
