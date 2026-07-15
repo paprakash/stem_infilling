@@ -49,6 +49,8 @@ def main():
     ap.add_argument("--split", default="val")
     ap.add_argument("--out", default=os.path.join(ROOT, "results", "phase1"))
     ap.add_argument("--workers", type=int, default=16)
+    ap.add_argument("--levels", type=int, nargs="+", default=None,
+                    help="restrict to these damage levels (e.g. 1 36) for fast milestone tracking")
     args = ap.parse_args()
 
     cfg = yaml.safe_load(open(args.config))
@@ -61,6 +63,8 @@ def main():
     print(f"{cfg['exp']} @ iter {it}, split={args.split}", flush=True)
 
     pairs = build_index(load_split(args.split))
+    if args.levels:
+        pairs = [p for p in pairs if p[2] in set(args.levels)]
     print(f"{len(pairs)} pairs", flush=True)
 
     os.makedirs(args.out, exist_ok=True)

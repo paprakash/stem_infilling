@@ -19,10 +19,15 @@ audits in `results/phase1/diagnostics/` and `results/phase2/`.
 | audited inventions (val subset) | 105 | 143† | ~0 |
 
 \* NAFNet base at 25k; its 100k undamaged PSNR is comparable (31.7–32.8 by level).
-† Restormer's inventions are predominantly FAINT (below the 0.08 preservation
-tolerance but above the blob-detector threshold) — ghost texture rather than
-confident atoms; that is why its preservation metric is high while its detector
-census is the worst.
+† Restormer's inventions are fainter on median than NAFNet's (pred intensity
+0.390 vs 0.536 at invention sites) but NOT predominantly ghost texture: 41.7%
+exceed 0.5 intensity (NAFNet: 56.3%) and 64.4% exceed 0.3 (NAFNet: 83.5%) —
+a substantial fraction are confident bright columns. Its high preservation
+metric (0.985) coexists with the worst census partly because the metric's
+DISK-MEAN tolerance dilutes small bright blobs: a compact invented column
+inside a larger site disk can pass mean|pred−target| ≤ 0.08 while still being
+a real detection. The census (per-detection) and the metric (per-site mean)
+bound the problem from above and below.
 
 **Effective-sample caveat:** at 100k iters, Restormer (batch 6) has seen ~600k
 crops vs NAFNet's ~1.6M (batch 16), and took 2,323 min vs 834 min wall-clock
@@ -91,8 +96,10 @@ Build after the from-scratch retrain; evaluate with the same acceptance battery.
 `runs/nafnet_w32_scratch_asym1/`, penalty warmed up 0→1.0 over iters 20k–40k) —
 launch awaiting review confirmation.** Rationale weighting invention rate:
 asym1 lifts NAFNet's preservation to 0.975 while keeping its decisive
-high-damage dominance (the deliverable regime), and its inventions are bright
-and thus catchable/gateable, vs Restormer's diffuse faint ghosting. Restormer
+high-damage dominance (the deliverable regime). Both models invent confident
+bright columns at nonzero rates (see census footnote) — neither census supports
+model choice on invention profile alone, which is why the path to ~zero is the
+Phase-3 gate rather than the architecture. Restormer
 remains a credible conservative alternative at low damage (native 0.985
 preservation, 0.994 precision) at 2.8× the training cost and unmatched samples;
 if the workflow ends up prioritizing levels 1–8, an asym1-style Restormer FT is
