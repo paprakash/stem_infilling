@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+nafnet_evid_asym,1,11,50,5,8
+nafnet_evid_asym,2,7,45,9,6
+nafnet_evid_asym,4,17,50,6,11
+nafnet_evid_asym,8,27,55,5,10
+nafnet_evid_asym,12,9,46,7,11
+nafnet_evid_asym,16,21,65,3,11
+nafnet_evid_asym,20,19,54,10,8
+nafnet_evid_asym,28,14,51,7,5
+nafnet_evid_asym,36,15,51,24,6

@@ -1,0 +1,17 @@
+cls                     borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model            level                                                                         
+nafnet_evid_asym 1                      11             50                 5                   8
+                 2                       7             45                 9                   6
+                 4                      17             50                 6                  11
+                 8                      27             55                 5                  10
+                 12                      9             46                 7                  11
+                 16                     21             65                 3                  11
+                 20                     19             54                10                   8
+                 28                     14             51                 7                   5
+                 36                     15             51                24                   6
+
+cls               borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model                                                                                    
+nafnet_evid_asym                 140            467                76                  76
+
+total FP instances: 759 over 20x9 images/model

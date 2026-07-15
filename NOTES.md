@@ -229,6 +229,19 @@ Full-val means, base100k → ft_v1 (47% coverage) → ft_v2 (99% coverage):
 - Masks v3 (with GB class 5) generated after ft_v2 finished (lazy-read safety);
   nafnet_w32_ft_evid and _evid_asym launched from 100k on v3 masks.
 
+## 2026-07-15 — evidence FTs evaluated: the trade-off curve brackets the answer
+
+Full-val means/medians (def_pres@1 | recall@36 | psnr_dmg@36):
+base 0.960|0.984|24.60 → ft_v2 0.966|0.978|23.96 → evid 0.963|0.983|24.02 →
+evid_asym(5) 0.981|0.945|21.53. Identity bar: 0.996|0.804|13.4.
+- Evidence split WORKS as designed: recall@36 recovered to 0.983 (hedging gone) but
+  symmetric weighting still doesn't lift preservation.
+- Asymmetric penalty is the ONLY lever that moves preservation (0.963→0.981, vacuum
+  phantoms →0.006) but coeff 5 violates the no-regression rule (−3 dB psnr_dmg@36,
+  recall −0.04, borderline_shifted 39→140 = global under-filling).
+- Interpolation launched: nafnet_w32_ft_evid_asym1 (evid + invention_penalty 1.0).
+  Decision after its battery; winning recipe → final from-scratch retrain.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
