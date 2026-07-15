@@ -1,0 +1,38 @@
+exp: nafnet_w32_scratch_asym1
+# FINAL from-scratch retrain with the approved asym1 recipe (pre-approved
+# 2026-07-15, LAUNCH ONLY AFTER close-out review confirmation):
+#   evidence-split defect weights (10x visible / 2x destroyed, masks v3 incl.
+#   GB class) + asymmetric invention penalty 1.0 with warmup (0 until 20k,
+#   linear ramp to full by 40k) so early reconstruction learning isn't warped.
+#   The FT-derived trade-off curve justifies the endpoint (NOTES.md 2026-07-15).
+model:
+  name: nafnet
+  width: 32
+  enc_blks: [2, 2, 4, 8]
+  middle_blk_num: 12
+  dec_blks: [2, 2, 2, 2]
+data:
+  crop: 384
+  batch: 16
+  workers: 8
+optim:
+  lr: 1.0e-3
+  min_lr: 1.0e-7
+  betas: [0.9, 0.9]
+  weight_decay: 0.0
+loss:
+  fft_weight: 0.1
+  charb_eps: 1.0e-3
+  defect_weight_visible: 10.0
+  defect_weight_destroyed: 2.0
+  invention_penalty: 1.0
+  invention_penalty_warmup: [20000, 40000]
+train:
+  total_iters: 100000
+  val_every: 1000
+  full_val_every: 5000
+  ckpt_every: 1000
+  milestone_every: 5000
+  log_every: 100
+  overfit_iters: 1500
+  seed: 20260715

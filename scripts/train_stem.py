@@ -210,11 +210,19 @@ def main():
     model.train()
     use_weights = (cfg["loss"].get("defect_weight", 1.0) != 1.0
                    or cfg["loss"].get("defect_weight_visible") is not None)
-    use_inv = cfg["loss"].get("invention_penalty", 0.0) > 0
+    full_inv_penalty = cfg["loss"].get("invention_penalty", 0.0)
+    use_inv = full_inv_penalty > 0
+    # optional warmup [start_iter, full_iter]: penalty 0 until start, linear to
+    # full by full_iter — early reconstruction learning is not warped (the FT
+    # trade-off curve justifies the endpoint; see NOTES.md 2026-07-15)
+    inv_warmup = cfg["loss"].get("invention_penalty_warmup")
     while it < total_iters:
         for sb, tb, wb, ib in loader:
             if it >= total_iters:
                 break
+            if use_inv and inv_warmup:
+                w0, w1 = inv_warmup
+                criterion.invention_penalty = full_inv_penalty * min(1.0, max(0.0, (it - w0) / max(w1 - w0, 1)))
             sb, tb = sb.to(device, non_blocking=True), tb.to(device, non_blocking=True)
             wb = wb.to(device, non_blocking=True) if use_weights else None
             ib = ib.to(device, non_blocking=True) if use_inv else None
