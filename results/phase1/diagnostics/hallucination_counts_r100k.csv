@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+restormer_100k,1,2,15,0,10
+restormer_100k,2,1,9,0,12
+restormer_100k,4,8,20,7,13
+restormer_100k,8,4,35,4,10
+restormer_100k,12,3,21,6,19
+restormer_100k,16,14,42,3,29
+restormer_100k,20,10,32,12,11
+restormer_100k,28,6,28,7,19
+restormer_100k,36,28,44,23,20

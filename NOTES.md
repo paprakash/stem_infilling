@@ -255,6 +255,16 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
   0.804; psnr_dmg still +9.8 dB over id). Strict no-regression alternative: evid.
   Decision deferred to review at 100k close-out.
 
+## 2026-07-15 — 100k CLOSE-OUT (see results/phase2/closeout_100k.md for full report)
+
+- Restormer@100k: PSNR@1 33.95 (beats identity 32.12), native defect preservation
+  0.985@1 / precision 0.994 — best low-damage model; but PSNR@36 26.42 < NAFNet 27.11,
+  preservation@36 0.858 < 0.888, and 143 audited (faint) inventions. Effective-sample
+  caveat: 600k crops vs NAFNet 1.6M; 2,323 vs 834 min wall-clock.
+- Winner: NAFNet + asym1 from-scratch retrain (staged, launch gated on review).
+- Census nuance, Phase-3 inference-gating spec, operating-range guidance, and the
+  matched-noise flag are all recorded in the close-out report.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

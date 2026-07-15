@@ -1,0 +1,17 @@
+cls                   borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model          level                                                                         
+restormer_100k 1                       2             15                 0                  10
+               2                       1              9                 0                  12
+               4                       8             20                 7                  13
+               8                       4             35                 4                  10
+               12                      3             21                 6                  19
+               16                     14             42                 3                  29
+               20                     10             32                12                  11
+               28                      6             28                 7                  19
+               36                     28             44                23                  20
+
+cls             borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model                                                                                  
+restormer_100k                  76            246                62                 143
+
+total FP instances: 527 over 20x9 images/model
