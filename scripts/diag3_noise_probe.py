@@ -45,6 +45,15 @@ def synth_matched_noise(noise, rng):
 
 
 def main():
+    global MODELS
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--models", nargs="+", default=None)
+    ap.add_argument("--tag", default="")
+    args = ap.parse_args()
+    if args.models:
+        MODELS = args.models
+    tag = f"_{args.tag}" if args.tag else ""
     os.makedirs(OUT, exist_ok=True)
     rng = np.random.default_rng(SEED)
     rows = []
@@ -61,7 +70,7 @@ def main():
                                  fft_before=fft_radial_error(t, pred),
                                  fft_after=fft_radial_error(t, pred_n)))
     df = pd.DataFrame(rows)
-    df.to_csv(os.path.join(OUT, "noise_probe.csv"), index=False)
+    df.to_csv(os.path.join(OUT, f"noise_probe{tag}.csv"), index=False)
     agg = df.groupby(["model", "level"])[["kl_before", "kl_after", "fft_before", "fft_after"]].median().round(4)
     print(agg.to_string())
 

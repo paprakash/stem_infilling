@@ -265,6 +265,19 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
 - Census nuance, Phase-3 inference-gating spec, operating-range guidance, and the
   matched-noise flag are all recorded in the close-out report.
 
+## 2026-07-16 — from-scratch retrain result + MODEL CARD (results/phase3/MODEL_CARD.md)
+
+- scratch_asym1 @100k: def_pres@1 0.984 / 39 inventions / vac_ph 0.003 (all best) BUT
+  recall@36 0.937, psnr_dmg@36 20.9 (−3.7 dB vs base) — the recipe from scratch slides
+  ALONG the trade-off curve to a more conservative point instead of transferring the
+  FT balance. Tracker's auto-pause never fired (rule required all three gates below;
+  def_pres stayed above throughout — one-sided divergence).
+- Decision per rule (no high-damage regression): **production candidate =
+  nafnet_w32_ft_evid_asym1**; scratch kept as low-damage-specialist checkpoint.
+- Matched-noise probe on the candidate: KL → 0.026–0.036, FFT → 0.13–0.17 at all levels.
+- Model card written (recipe, masks v3, per-level operating range, failure modes with
+  rates, science-dial statement, Phase-3 gating spec). Pending PI sign-off.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

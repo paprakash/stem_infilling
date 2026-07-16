@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+nafnet_scratch,1,2,34,4,6
+nafnet_scratch,2,0,22,3,7
+nafnet_scratch,4,6,26,10,6
+nafnet_scratch,8,6,42,4,10
+nafnet_scratch,12,4,28,8,4
+nafnet_scratch,16,19,46,3,1
+nafnet_scratch,20,12,34,11,2
+nafnet_scratch,28,7,26,5,1
+nafnet_scratch,36,12,32,17,2
