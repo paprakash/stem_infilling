@@ -278,6 +278,24 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
 - Model card written (recipe, masks v3, per-level operating range, failure modes with
   rates, science-dial statement, Phase-3 gating spec). Pending PI sign-off.
 
+## 2026-07-16 — GB re-audit + Phase 3 build + Phase 4 dependency flag
+
+- **GB re-audit verdict: the gb_line weight class did NOT earn its place** —
+  borderline-shifted clustering near seams is 2.63× for ft_evid_asym1 vs 2.54× at
+  base100k (unchanged within noise). Keep class 5 in masks (harmless, tiny area) but
+  it is not a working mitigation; GB displacement remains an open failure mode
+  (documented in model card).
+- **Phase 3 gating in progress**: damage_seg_v1 (NAFNet-w16, 30k iters, BCE pos_weight
+  5) training on dilate(|s−t|>0.06) masks, train split only. Gate evaluator
+  (scripts/eval_gated.py): source verbatim outside predicted mask (thr 0.3 + dilate 4,
+  conservative), ft_evid_asym1 inside, optional matched-noise in edited regions;
+  reports standard battery + segmenter P/R per level + miss-rate cost
+  (psnr_missed_dmg) + frac_edited.
+- **Phase 4 external data dependency (flagged, do not simulate)**: CycleGAN-robustness
+  evaluation requires CycleGAN-translated source images from the group's dose-translation
+  pipeline stage. Not available in this repo; no stand-in will be fabricated without
+  discussion. Blocking item for the Phase-4 row of MODEL_PLAN.md.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

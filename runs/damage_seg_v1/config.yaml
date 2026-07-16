@@ -1,0 +1,23 @@
+exp: damage_seg_v1
+# Phase-3 damage-mask segmenter: source -> damage logit. Small NAFNet-w16.
+model:
+  name: nafnet
+  width: 16
+  enc_blks: [1, 1, 1, 2]
+  middle_blk_num: 2
+  dec_blks: [1, 1, 1, 1]
+data:
+  crop: 384
+  batch: 16
+  workers: 8
+optim:
+  lr: 1.0e-3
+  min_lr: 1.0e-6
+loss:
+  pos_weight: 5.0   # damage pixels are the minority class (~5-15%)
+train:
+  total_iters: 30000
+  val_every: 2500
+  ckpt_every: 1000
+  log_every: 200
+  seed: 20260716
