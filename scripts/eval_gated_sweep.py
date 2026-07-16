@@ -32,7 +32,10 @@ SEG_CFG = os.path.join(ROOT, "runs", "damage_seg_v1", "config.yaml")
 SEG_CKPT = os.path.join(ROOT, "runs", "damage_seg_v1", "latest.pth")
 RES_CFG = os.path.join(ROOT, "runs", "nafnet_w32_ft_evid_asym1", "config.yaml")
 RES_CKPT = os.path.join(ROOT, "runs", "nafnet_w32_ft_evid_asym1", "iter_25000.pth")
-SETTINGS = [(0.3, 2), (0.3, 4), (0.5, 2), (0.5, 4), (0.7, 2), (0.7, 4)]
+# (threshold, dilation, min_component_px) — min_size kills speckle false-fires
+# (true damage is compact-to-extended; sub-400 px components at these
+# magnifications are noise). Round 2 of the sweep; round 1 was min_size 0.
+SETTINGS = [(0.7, 2, 0), (0.5, 2, 400), (0.7, 2, 400), (0.9, 2, 400), (0.95, 2, 400), (0.9, 2, 0)]
 
 
 def load_net(cfg_path, ckpt_path):
@@ -58,12 +61,25 @@ def _load_dm(structure, op):
     return np.load(p)["mask"] if os.path.exists(p) else None
 
 
+def make_mask(prob, thr, dil, min_size):
+    m = prob > thr
+    if min_size > 0:
+        from scipy.ndimage import label as cc_label
+        lab, n = cc_label(m)
+        if n:
+            sizes = np.bincount(lab.ravel())
+            m = np.isin(lab, np.nonzero(sizes >= min_size)[0][1:] if sizes[0] >= min_size
+                        else np.nonzero(sizes >= min_size)[0])
+            m[lab == 0] = False
+    return binary_dilation(m, iterations=dil)
+
+
 def one_metric_job(job):
     structure, op, lv, s, t, prob, pred, gt = job
     out = []
     dm = _load_dm(structure, op)
-    for thr, dil in SETTINGS:
-        mask = binary_dilation(prob > thr, iterations=dil)
+    for thr, dil, min_size in SETTINGS:
+        mask = make_mask(prob, thr, dil, min_size)
         gated = np.where(mask, pred, s)
         m = all_metrics(s, t, gated, with_columns=True, defect_mask=dm)
         tp = int((mask & gt).sum()); fp = int((mask & ~gt).sum()); fn = int((~mask & gt).sum())
@@ -74,7 +90,7 @@ def one_metric_job(job):
                                 if missed.sum() >= 10 else np.nan)
         m["frac_edited"] = float(mask.mean())
         m.update(structure=structure, family=material_family(structure), op=op, level=lv,
-                 thr=thr, dil=dil)
+                 thr=thr, dil=dil, ms=min_size)
         out.append(m)
     return out
 
@@ -92,10 +108,10 @@ def main():
     out_dir = os.path.join(ROOT, "results", "phase3")
     os.makedirs(out_dir, exist_ok=True)
     cache_dirs = {}
-    for thr, dil in SETTINGS:
-        d = os.path.join(ROOT, "data", "cache_phase1_preds", f"gated_t{thr}_d{dil}")
+    for thr, dil, ms in SETTINGS:
+        d = os.path.join(ROOT, "data", "cache_phase1_preds", f"gated_t{thr}_d{dil}_s{ms}")
         os.makedirs(d, exist_ok=True)
-        cache_dirs[(thr, dil)] = d
+        cache_dirs[(thr, dil, ms)] = d
 
     rows = []
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
@@ -106,8 +122,8 @@ def main():
             pred = infer_full(res, s01, mean, std)
             gt = binary_dilation(np.abs(s01 - t01) > 0.06, iterations=2)
             if structure in subset and op == "A":
-                for (thr, dil), d in cache_dirs.items():
-                    mask = binary_dilation(prob > thr, iterations=dil)
+                for (thr, dil, ms), d in cache_dirs.items():
+                    mask = make_mask(prob, thr, dil, ms)
                     np.save(os.path.join(d, f"{structure.replace('.png', '')}_lvl{lv}.npy"),
                             np.where(mask, pred, s01).astype(np.float32))
             futures.append(ex.submit(one_metric_job, (structure, op, lv, s01, t01, prob, pred, gt)))
@@ -118,7 +134,7 @@ def main():
 
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out_dir, f"gate_sweep_{args.split}_per_image.csv"), index=False)
-    summary = (df.groupby(["thr", "dil", "level"])
+    summary = (df.groupby(["thr", "dil", "ms", "level"])
                .agg(psnr=("psnr", "median"), recall=("col_recall", "median"),
                     psnr_dmg=("psnr_dmg", "median"), def_pres=("defect_preserved_frac", "mean"),
                     vac_ph=("vacuum_phantom_frac", "mean"), seg_p=("seg_precision", "median"),

@@ -296,6 +296,21 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
   pipeline stage. Not available in this repo; no stand-in will be fabricated without
   discussion. Blocking item for the Phase-4 row of MODEL_PLAN.md.
 
+## 2026-07-16 — Phase 3 gate sweep verdict: premise falsified for segmenter v1
+
+- Sweep (12 settings, full val): high-damage side is essentially free at thr ≤0.7
+  (psnr_dmg −0.13 dB, recall preserved); tight settings converge at low damage
+  (def_pres@1 0.990, 0.6% edited at thr 0.95+size400) — but **inventions never drop**
+  (lvl 1-4: 23 vs 23 ungated at the tightest setting). The segmenter's confident
+  low-damage detections ARE the vacancy sites: trained to exclude them (|s−t| small
+  there) yet generalizes "dark anomaly = damage". Zero-invention guarantee holds only
+  if segmenter precision holds at invention-prone sites — it doesn't in v1.
+- Also: gating inflates borderline_shifted (paste seams create detection shifts:
+  189→698 as thr rises) — cosmetic but worth knowing.
+- Model card updated: gated mode evaluated, NOT recommended as-built; v2 path spec'd
+  (hard-negative defect sites in segmenter training — defect masks provide the labels).
+- Paused for review before building segmenter v2.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

@@ -72,6 +72,34 @@ the recipe shifts the operating point along the trade-off curve rather than
 transferring the FT's balance. Violates the no-high-damage-regression rule →
 kept as a low-damage-specialist checkpoint; superseded for production by the FT.
 
+## Gated mode (Phase 3) — evaluated, NOT recommended as-built
+
+Gate: damage_seg_v1 (NAFNet-w16, 30k iters, BCE pos_weight 5) predicts a damage
+mask from the source; source copied verbatim outside, ft_evid_asym1 inside.
+Swept threshold {0.3–0.95} × dilation {2,4} × min-component {0, 400 px} on full
+val (results/phase3/gate_sweep_*_summary.csv). Verdict against the acceptance
+checks:
+
+1. **Inventions do NOT go to ~0 at any setting** (59–79 vs 70 ungated; levels
+   1–4: 23 vs 23 even at thr 0.95 + size filter, where only 0.6% of pixels are
+   edited). Mechanism: the segmenter's most confident false positives at low
+   damage ARE the dark vacancy sites — "dark anomalous spot" reads as damage
+   from the source alone, so the mask hands the restorer exactly the sites it
+   invents at. The gate's guarantee is only as strong as segmenter precision at
+   invention-prone sites, and segmenter v1 fails precisely there.
+2. Low-damage convergence: partial — defect preservation reaches 0.990 at
+   thr 0.95+s400 (identity 0.996) with 0.6% edited, but per (1) the surviving
+   edits sit on the wrong sites.
+3. High-damage cost is level-dependent: ≤0.13 dB at thr ≤0.7 (recall preserved,
+   missed damage mild at 26–28 dB), but −0.8 to −1.3 dB at thr ≥0.9 (segmenter
+   recall falls to 0.66–0.78).
+
+**Path forward (spec'd, not built): segmenter v2 with hard-negative defect
+sites** — the training-time defect masks label exactly the dark-but-undamaged
+sites; weighting them as strong negatives in the segmenter's BCE teaches the
+vacancy-vs-damage distinction the gate needs. Alternative: larger segmenter.
+Until then, gated mode is not recommended; the ungated candidate's rates stand.
+
 ## Pipeline notes
 
 - Inference: per-image normalization by source stats; reflect-pad to /16;

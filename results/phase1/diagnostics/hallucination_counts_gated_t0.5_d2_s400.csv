@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+gated_t0.5_d2_s400,1,7,40,3,6
+gated_t0.5_d2_s400,2,10,32,9,12
+gated_t0.5_d2_s400,4,25,37,9,7
+gated_t0.5_d2_s400,8,20,50,5,9
+gated_t0.5_d2_s400,12,16,42,7,13
+gated_t0.5_d2_s400,16,17,66,2,11
+gated_t0.5_d2_s400,20,11,41,9,5
+gated_t0.5_d2_s400,28,12,50,7,3
+gated_t0.5_d2_s400,36,16,50,22,6

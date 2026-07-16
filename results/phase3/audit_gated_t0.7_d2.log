@@ -1,0 +1,17 @@
+cls                  borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model         level                                                                         
+gated_t0.7_d2 1                      21             41                 3                   6
+              2                      15             34                 9                  11
+              4                      50             37                 9                   6
+              8                      47             54                 5                  11
+              12                     17             44                 7                   9
+              16                     34             69                 2                  10
+              20                     15             43                 9                   5
+              28                     17             56                 7                   2
+              36                     17             46                22                   4
+
+cls            borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model                                                                                 
+gated_t0.7_d2                 233            424                73                  64
+
+total FP instances: 794 over 20x9 images/model

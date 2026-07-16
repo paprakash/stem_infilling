@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+gated_t0.7_d4,1,11,40,3,6
+gated_t0.7_d4,2,8,34,9,10
+gated_t0.7_d4,4,39,38,10,6
+gated_t0.7_d4,8,26,49,5,15
+gated_t0.7_d4,12,15,41,7,9
+gated_t0.7_d4,16,25,67,2,11
+gated_t0.7_d4,20,12,45,9,5
+gated_t0.7_d4,28,13,52,7,2
+gated_t0.7_d4,36,15,45,22,4
