@@ -311,6 +311,23 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
   (hard-negative defect sites in segmenter training — defect masks provide the labels).
 - Paused for review before building segmenter v2.
 
+## 2026-07-17 — Segmenter v2 + feathered gate: level-conditioned gating RECOMMENDED
+
+- **Hard negatives worked**: defect-site FP (the guarantee metric, now reported per
+  level) 0.15-0.19 → 0.019-0.07 at tight thresholds; lvl 1-4 inventions 23 → 0 at
+  thr 0.9-0.95+s400 with def_pres@1 = 0.9955 = identity and ≤0.5 % pixels edited.
+  Total census 70 → 15 (pure tight) / 28 (adaptive).
+- **No single setting meets both checks** (tight costs −2.1..−3.7 dB @36). Adaptive
+  probe-area rule evaluated and REJECTED: segmenter over-prediction variance makes
+  lvl-1 probe areas span 7-92 % — no separating threshold exists.
+- **Resolution: level-conditioned gate** (damage level = known acquisition parameter):
+  thr 0.9+s400 at levels 1-4, thr 0.5+s400 at ≥8 (psnr_dmg@36 −0.24 dB, recall 0.970).
+  Model card gated section rewritten accordingly; v1 verdict kept as historical.
+- Feathering: borderline_shifted 698 → 165-330; still 2.6-5× ungated (blend-zone
+  detection shifts) — cosmetic residual, documented.
+- Stopped here per instruction; next decisions (PI): adopt level-conditioned gated
+  mode, science-dial setting, Phase-4 CycleGAN data.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

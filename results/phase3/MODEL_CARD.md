@@ -72,7 +72,37 @@ the recipe shifts the operating point along the trade-off curve rather than
 transferring the FT's balance. Violates the no-high-damage-regression rule →
 kept as a low-damage-specialist checkpoint; superseded for production by the FT.
 
-## Gated mode (Phase 3) — evaluated, NOT recommended as-built
+## Gated mode (Phase 3) — RECOMMENDED as level-conditioned configuration (segmenter v2)
+
+**Segmenter v2 (hard-negative defect sites: dark undamaged mask-sites weighted
+10× as negatives) fixed the v1 vacancy-site leak.** Defect-site FP rate fell
+from ~0.16 (v1-equivalent) to 0.019–0.044 at tight thresholds; with feathered
+compositing (linear alpha over 6 px inside the mask edge; verbatim source
+outside preserved exactly). Full sweep: results/phase3/gatedv2_sweep_summary.csv.
+
+| gate setting | best for | key numbers (full val) |
+|---|---|---|
+| **thr 0.9, dil 2, min-size 400** | **levels 1–4 (low dose)** | def_pres@1 **0.9955 = identity**, 0.5% pixels edited, levels 1–4 inventions **0–1** (ungated: 23) |
+| **thr 0.5, dil 2, min-size 400** | **levels ≥ 8 (high dose)** | psnr_dmg@36 22.98 (−0.24 dB vs ungated, within budget), recall 0.970, total inventions 70 → ~30, confined to true-damage interiors |
+
+**Deployment note:** damage level is a known acquisition parameter (operator-set
+dose), so the gate should be conditioned on it directly. A per-image adaptive
+rule (probe-mask area) was evaluated and is NOT reliable — segmenter
+over-prediction variance makes level-1 probe areas span 7–92%, overlapping
+level 36. Do not use the adaptive rule; use the level-conditioned table.
+
+Residuals, stated plainly:
+- No SINGLE setting meets both acceptance checks; the composite (level-
+  conditioned) configuration meets both using measured rows.
+- Inventions inside genuinely damaged regions remain by design (the model must
+  reconstruct there); they are exactly the pixels the mask flags for review.
+- Paste-seam artifact: feathering cut borderline-shifted inflation from up to
+  698 to 165–330, still above ungated (~64) — blended transition zones shift
+  some detections; cosmetic, tracked, not resolved.
+
+---
+
+### Historical: v1 gate verdict (superseded by v2 above)
 
 Gate: damage_seg_v1 (NAFNet-w16, 30k iters, BCE pos_weight 5) predicts a damage
 mask from the source; source copied verbatim outside, ft_evid_asym1 inside.

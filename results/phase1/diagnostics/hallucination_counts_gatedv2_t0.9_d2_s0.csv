@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+gatedv2_t0.9_d2_s0,1,3,25,3,0
+gatedv2_t0.9_d2_s0,2,13,20,8,0
+gatedv2_t0.9_d2_s0,4,52,25,5,2
+gatedv2_t0.9_d2_s0,8,46,39,6,2
+gatedv2_t0.9_d2_s0,12,68,35,6,2
+gatedv2_t0.9_d2_s0,16,105,49,5,2
+gatedv2_t0.9_d2_s0,20,82,40,11,5
+gatedv2_t0.9_d2_s0,28,103,45,8,3
+gatedv2_t0.9_d2_s0,36,104,48,22,2

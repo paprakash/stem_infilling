@@ -1,0 +1,17 @@
+cls                       borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model              level                                                                         
+gatedv2_t0.7_d2_s0 1                      13             27                 3                   2
+                   2                      23             24                 8                   2
+                   4                      29             24                 7                   7
+                   8                      33             45                 5                   2
+                   12                     25             30                 7                   4
+                   16                     45             55                 2                   3
+                   20                     17             33                 9                   5
+                   28                     18             43                 7                   1
+                   36                     27             49                23                   3
+
+cls                 borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model                                                                                      
+gatedv2_t0.7_d2_s0                 230            330                71                  29
+
+total FP instances: 660 over 20x9 images/model
