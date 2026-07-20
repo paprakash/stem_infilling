@@ -328,6 +328,16 @@ base 0.960|0.055|0.984|24.60 · evid 0.963|0.025|0.983|24.02 ·
 - Stopped here per instruction; next decisions (PI): adopt level-conditioned gated
   mode, science-dial setting, Phase-4 CycleGAN data.
 
+## 2026-07-17 — meeting figures (results/phase3/, visual_verification/ random w/ seed 20260717)
+
+Full-val level-36 reference (for the threeway figure):
+
+| model | col_recall @36 | psnr_dmg @36 (dB) |
+|---|---|---|
+| base 100k | 0.9844 | 24.60 |
+| ft_evid_asym1 | 0.9688 | 23.22 |
+| from-scratch asym1 | 0.9370 | 20.88 |
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column
