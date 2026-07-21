@@ -1,5 +1,11 @@
 # STEM Beam-Damage Restoration — project root
 
+**STATUS: COMPLETE except Phase 4** (CycleGAN-robustness; blocked on external data —
+group-pipeline CycleGAN outputs, do not simulate a stand-in). Deployed system: see
+`PROJECT_SUMMARY.md`, `results/phase3/MODEL_CARD.md`, release bundle in
+`models_release/` (+ copy at /blue/hennig/pawanprakash/stem_release_v1.0), tag
+v1.0-blind-gate. Running log: NOTES.md.
+
 Restore beam-damaged STEM images (source) to their pristine structures (target): remove beam-deposited artifacts and infill missing atomic columns. Supervised paired image-to-image restoration. Full context in `PROJECT_BRIEF.md`; working plan in `MODEL_PLAN.md`.
 
 ## Data (READ-ONLY — never modify)

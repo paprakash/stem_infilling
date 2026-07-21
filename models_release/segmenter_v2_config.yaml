@@ -1,0 +1,27 @@
+exp: damage_seg_v2
+# v2 = v1 + HARD NEGATIVES: dark defect sites (mask classes 1/4) that are
+# undamaged get 10x BCE weight as negatives — teaches vacancy-vs-damage,
+# the distinction the gate's invention guarantee depends on. Single-variable
+# change vs v1 (same arch/iters/lr).
+model:
+  name: nafnet
+  width: 16
+  enc_blks: [1, 1, 1, 2]
+  middle_blk_num: 2
+  dec_blks: [1, 1, 1, 1]
+data:
+  crop: 384
+  batch: 16
+  workers: 8
+optim:
+  lr: 1.0e-3
+  min_lr: 1.0e-6
+loss:
+  pos_weight: 5.0
+  hard_neg_weight: 10.0
+train:
+  total_iters: 30000
+  val_every: 2500
+  ckpt_every: 1000
+  log_every: 200
+  seed: 20260716

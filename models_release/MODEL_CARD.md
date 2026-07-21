@@ -159,24 +159,6 @@ from a single image. Best policy (margin 0): def_pres@1 0.9925, levels 1–4
 inventions 6. Inferior to hysteresis on every axis; also rejected earlier:
 probe-area adaptive rule (level-1 probe areas span 7–92%).
 
-## Review flag (tail mitigation — partial, documented honestly)
-
-`stem_restore.py` emits `review_flag: "diffuse damage, review manually"` when
-the largest UNSEEDED loose component exceeds `--flag-px` (default 20,000).
-Measured on full val: 3.4% review rate, catches 1/5 known tail cases;
-10,000 px → 9.9% rate, 2/5. The tail (7/456 high-dose images under-repaired
-> 2 dB vs oracle) is only partially detectable from mask statistics — no rule
-separated it cleanly from benign low-dose over-fire. Mitigating fact: the
-undetected failure direction is CONSERVATIVE — missed damage keeps source
-pixels verbatim; nothing is invented. The bound is a PI-settable dial
-(results/phase3/flag_tuning.log has the full table).
-
-## Release bundle
-
-`models_release/` (also at /blue/hennig/pawanprakash/stem_release_v1.0, both
-sha256-verified): restorer + segmenter weights (optimizer state stripped),
-configs, stem_restore.py, MASKS_VERSION.md, this card, SHA256SUMS.
-
 ## Pipeline notes
 
 - Inference: per-image normalization by source stats; reflect-pad to /16;

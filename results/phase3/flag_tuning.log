@@ -1,0 +1,4 @@
+B=10000: flag rate all=0.099  lvl1-4=0.136  lvl28-36=0.057  tails caught=2/5
+B=20000: flag rate all=0.034  lvl1-4=0.045  lvl28-36=0.013  tails caught=1/5
+B=30000: flag rate all=0.021  lvl1-4=0.031  lvl28-36=0.009  tails caught=1/5
+B=50000: flag rate all=0.009  lvl1-4=0.013  lvl28-36=0.004  tails caught=1/5

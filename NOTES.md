@@ -354,6 +354,26 @@ level-conditioned oracle (def_pres@1 0.9955 / lvl1-4 inventions 1 / psnr_dmg@36
   def_pres@1 0.9925, lvl1-4 inventions 6.
 - Model card deployment section updated. Paused for review.
 
+## 2026-07-21 — PROJECT CLOSE-OUT (v1.0-blind-gate)
+
+- Deployment config accepted: hysteresis gate (growth 0.5, seed 400) over
+  ft_evid_asym1 + segmenter v2, feathered, optional matched-noise flag.
+- **Review flag** (stem_restore.py): largest unseeded loose component > 20,000 px
+  (default) → "diffuse damage, review manually". Measured: 3.4 % review rate,
+  catches 1/5 known tail cases (10k px → 9.9 %, 2/5). Tail only partially
+  detectable from mask statistics; undetected failures are conservative
+  (source-preserving). Full tuning table: results/phase3/flag_tuning.log.
+- **Release bundle** (weights-only ckpts, configs, wrapper, card, masks note):
+  - /blue/hennig/pawanprakash/ornl_stem/models_release/
+  - /blue/hennig/pawanprakash/stem_release_v1.0/  (independent copy)
+  Both sha256-verified byte-identical; checksums in SHA256SUMS (restorer
+  116,868,753 B @ FT iter 25000; segmenter 6,964,575 B @ iter 30000).
+  Wrapper smoke-tested: L36 input → 55.7 % edited, L1 input → 0 % edited
+  (blind self-selection working); basename-collision output bug found in smoke
+  test and fixed before bundling.
+- PROJECT_SUMMARY.md written (paper seed); CLAUDE.md status updated; tagged
+  v1.0-blind-gate. **Done until CycleGAN data arrives (Phase 4).**
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

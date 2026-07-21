@@ -24,3 +24,4 @@ __pycache__/
 # before each commit: git ls-files -z | xargs -0 du -m | awk '$1>=5')
 nohup.out
 results/phase3/*_per_image.csv
+models_release/*.pth
