@@ -1,0 +1,17 @@
+cls                   borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model          level                                                                         
+hyst_g0.7_s800 1                       4             23                 3                   0
+               2                      10             20                 8                   0
+               4                      24             23                 7                   2
+               8                      16             41                 5                   2
+               12                     19             31                 7                   4
+               16                     27             51                 2                   2
+               20                     14             34                 9                   3
+               28                     19             45                 7                   1
+               36                     25             48                23                   3
+
+cls             borderline_shifted  boundary_edge  invented_damaged  invented_undamaged
+model                                                                                  
+hyst_g0.7_s800                 158            316                71                  17
+
+total FP instances: 562 over 20x9 images/model

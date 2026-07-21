@@ -338,6 +338,22 @@ Full-val level-36 reference (for the threeway figure):
 | ft_evid_asym1 | 0.9688 | 23.22 |
 | from-scratch asym1 | 0.9370 | 20.88 |
 
+## 2026-07-21 — BLIND gating for mixed-dose batches: hysteresis ≈ oracle
+
+PI requirement: no dose input at inference. Evaluated blind, full val, vs
+level-conditioned oracle (def_pres@1 0.9955 / lvl1-4 inventions 1 / psnr_dmg@36
+22.98) and ungated:
+- **Hysteresis gate (growth 0.5, seed 400) RECOMMENDED**: −0.03 dB @36, lvl1-4
+  inventions 2, def_pres@1 0.9934, borderline 138 < oracle 164. Training-free.
+  Tail: 7/456 hi-dmg images >2 dB below oracle (no ≥400px strict seed forms in
+  diffuse damage) — seed_min is the tail-vs-tightness dial (100/400/800:
+  p5 −0.33/−0.52/−0.96 dB).
+- **Dose classifier REJECTED**: 70.9% acc but 0.28-0.31 on low levels (lvl-4
+  misread as high 72%) — dose labels are noisy proxies for realized damage
+  (Phase-0 non-monotonicity), 4-vs-8 ill-posed from one image. Policy best:
+  def_pres@1 0.9925, lvl1-4 inventions 6.
+- Model card deployment section updated. Paused for review.
+
 - **Phase 1 eval harness scope (committed, not deferred)**: from the first NAFNet/Restormer
   validation onward, the per-level (median+IQR) and per-family breakdowns include ALL of:
   PSNR, SSIM, intensity-histogram KL, 2D-FFT radial spectrum error, **atom-column

@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+gated_oracle,1,3,24,3,0
+gated_oracle,2,7,18,8,0
+gated_oracle,4,42,22,5,1
+gated_oracle,8,28,41,5,2
+gated_oracle,12,9,33,7,5
+gated_oracle,16,27,55,2,4
+gated_oracle,20,17,36,10,5
+gated_oracle,28,17,43,7,1
+gated_oracle,36,14,42,22,5

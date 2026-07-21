@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+hyst_g0.7_s800,1,4,23,3,0
+hyst_g0.7_s800,2,10,20,8,0
+hyst_g0.7_s800,4,24,23,7,2
+hyst_g0.7_s800,8,16,41,5,2
+hyst_g0.7_s800,12,19,31,7,4
+hyst_g0.7_s800,16,27,51,2,2
+hyst_g0.7_s800,20,14,34,9,3
+hyst_g0.7_s800,28,19,45,7,1
+hyst_g0.7_s800,36,25,48,23,3

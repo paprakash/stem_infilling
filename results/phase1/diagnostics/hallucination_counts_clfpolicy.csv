@@ -1,0 +1,10 @@
+model,level,borderline_shifted,boundary_edge,invented_damaged,invented_undamaged
+gated_clfpolicy,1,8,27,3,2
+gated_clfpolicy,2,22,26,9,2
+gated_clfpolicy,4,24,26,7,2
+gated_clfpolicy,8,28,41,5,2
+gated_clfpolicy,12,9,33,7,5
+gated_clfpolicy,16,27,55,2,4
+gated_clfpolicy,20,17,36,10,5
+gated_clfpolicy,28,17,43,7,1
+gated_clfpolicy,36,14,42,22,5

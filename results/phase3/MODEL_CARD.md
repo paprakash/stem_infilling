@@ -130,6 +130,35 @@ sites; weighting them as strong negatives in the segmenter's BCE teaches the
 vacancy-vs-damage distinction the gate needs. Alternative: larger segmenter.
 Until then, gated mode is not recommended; the ungated candidate's rates stand.
 
+## Deployment: BLIND gate for mixed-dose batches (recommended 2026-07-21)
+
+The pipeline supplies mixed damage levels with no dose metadata, so the gate
+selects its own strength per image. Two blind systems were evaluated on full
+val against the level-conditioned oracle (upper bound) and ungated:
+
+**RECOMMENDED: hysteresis gate — growth 0.5, seed_min 400 px** (training-free;
+editable mask = connected components of the loose mask (prob > 0.5) that
+contain at least one strict seed (prob > 0.9, ≥ 400 px); feathered
+compositing). Blind performance vs oracle:
+- psnr_dmg@36 22.95 vs 22.98 (−0.03 dB; bar was 0.3); recall@36 0.970 = oracle.
+- Levels 1–4 inventions 2 vs oracle 1 (ungated: 23); total census 24 vs 23;
+  def_pres@1 0.9934 vs 0.9955 (Δ ≈ half a site over 228 images); median image
+  at level 1 edits ~4% of pixels, converging to identity on clean inputs.
+- Seam artifacts BELOW oracle (borderline 138 vs 164).
+- Tail (documented): median high-damage delta −0.005 dB, p5 −0.52 dB; 7/456
+  level-28/36 images fall > 2 dB below oracle where diffuse damage never forms
+  a ≥400 px confident seed (worst −7.2 dB). seed_min trades this tail against
+  low-dose tightness (100 → p5 −0.33 but more low-dose editing; 800 → tighter
+  low-dose, tail doubles).
+
+**Rejected: dose classifier policy.** A small CNN classifying low(1–4)/high(8+)
+from the source reaches 70.9% but only 0.28–0.31 accuracy on low levels (72% of
+level-4 images misread as high) — consistent with Phase-0's finding that dose
+labels are noisy proxies for realized damage; the 4-vs-8 boundary is ill-posed
+from a single image. Best policy (margin 0): def_pres@1 0.9925, levels 1–4
+inventions 6. Inferior to hysteresis on every axis; also rejected earlier:
+probe-area adaptive rule (level-1 probe areas span 7–92%).
+
 ## Pipeline notes
 
 - Inference: per-image normalization by source stats; reflect-pad to /16;
